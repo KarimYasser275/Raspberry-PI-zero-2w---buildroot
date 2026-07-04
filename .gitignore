@@ -56,3 +56,6 @@ dkms.conf
 
 #build artifacts
 buildroot/output/*
+
+#Wifi credentials
+base_external/rootfs_overlay/etc/wpa_supplicant.conf
