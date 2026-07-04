@@ -1,0 +1,55 @@
+#!/bin/sh
+#
+# Start WiFi on Raspberry Pi Zero 2W
+#
+
+WIFI_INTERFACE=wlan0
+WPA_CONF=/etc/wpa_supplicant.conf
+
+case "$1" in
+    start)
+        printf "Starting WiFi: "
+
+        # Load the WiFi driver
+        modprobe brcmfmac
+
+        # Wait for wlan0 to appear
+        for i in 1 2 3 4 5; do
+            if ifconfig "$WIFI_INTERFACE" > /dev/null 2>&1; then
+                break
+            fi
+            sleep 1
+        done
+
+        if ! ifconfig "$WIFI_INTERFACE" > /dev/null 2>&1; then
+            echo "FAIL (wlan0 not found)"
+            exit 1
+        fi
+
+        # Bring up interface
+        ifconfig "$WIFI_INTERFACE" up
+
+        # Start wpa_supplicant
+        wpa_supplicant -B -i "$WIFI_INTERFACE" -c "$WPA_CONF"
+
+        # Get IP via DHCP
+        udhcpc -i "$WIFI_INTERFACE" -b -q
+
+        echo "OK"
+        ;;
+    stop)
+        printf "Stopping WiFi: "
+        killall -q wpa_supplicant
+        ifconfig "$WIFI_INTERFACE" down 2>/dev/null
+        echo "OK"
+        ;;
+    restart)
+        "$0" stop
+        sleep 1
+        "$0" start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
