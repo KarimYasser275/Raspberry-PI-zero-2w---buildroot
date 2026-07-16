@@ -22,8 +22,6 @@ gpu_mem_256=100
 gpu_mem_512=100
 gpu_mem_1024=100
 
-# fixes rpi (3B, 3B+, 3A+, 4B ,zero W and zero 2) ttyAMA0 serial console
-#dtoverlay=miniuart-bt
 
 # enable autoprobing of Bluetooth driver without need of hciattach/btattach
 dtparam=krnbt=on
@@ -36,3 +34,6 @@ dtparam=i2c_arm=on
 
 # Load the SSD1306 Device Tree Overlay
 dtoverlay=ssd1306
+
+# fixes rpi (3B, 3B+, 3A+, 4B ,zero W and zero 2) ttyAMA0 serial console
+dtoverlay=miniuart-bt
